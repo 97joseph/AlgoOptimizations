@@ -1,0 +1,53 @@
+import java.util.Iterator;
+import java.util.LinkedList;
+
+public class BFS extends Graph {
+
+    public int level[];
+
+    public BFS(String filePath) throws Exception {
+        readUnweightedGraph(filePath);
+    }
+
+    public void execute(int s) { // complete this method
+        int[] level = new int[numVertices];
+        this.level = level;
+        LinkedList<Integer> queue = new LinkedList();
+        for (int i = 0; i < numVertices; i++) {
+            level[i] = Integer.MAX_VALUE;
+            level[s] = 0;
+            queue.addFirst(s);
+            while (queue.size() != 0) {
+                int v = queue.removeFirst();      
+                LinkedList<Edge> row = adjList.get(v);
+                Iterator<Edge> itr = row.iterator(); 
+                while (itr.hasNext()) {
+                    Edge adjEdge = itr.next();
+                    int w = adjEdge.dest;
+                    if (level[w] == Integer.MAX_VALUE) {                                              
+                        level[w] = level[v] + 1;
+                        queue.addLast(w);
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean[][] computeTransitiveClosure() { // complete this method
+        boolean[][] M = new boolean[numVertices][];
+        for (int i = 0; i < numVertices; i++) {
+            boolean[] temp = new boolean[numVertices];
+            M[i] = temp;
+            execute(i);
+            for (int j = 0; j <= numVertices-1; j++) {
+                if (level[j] != Integer.MAX_VALUE) {
+                    M[i][j] = true;                                  
+                }
+                else {
+                    M[i][j] = false; 
+                }
+            }
+        }
+        return M;
+    }
+}
